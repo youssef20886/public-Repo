@@ -399,3 +399,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cardPrefab: {fileID: 1260775200408538284, guid: 37db11f7fd5f9de4782bb8e347ba7086, type: 3}
+  _cardSprites: {fileID: 11400000, guid: 2a795d0f64adbae499fc7b3b289c0bae, type: 2}

@@ -6,13 +6,15 @@ using UnityEngine;
 
 public class CardsManager : SingletonMonobehaviour<CardsManager>
 {
-    private const int _cardsNumbers = 10;
+    private const int _cardsNumbers = 12;
 
     [SerializeField] private CardHolder _cardPrefab;
+    [SerializeField] private CardSpritesSO _cardSprites;
+
     private List<CardHolder> _cardsToCompare = new List<CardHolder>();
     private List<CardHolder> _cardsToSpawn = new List<CardHolder>();
 
-    private Vector3 _initialCardsPosition = new Vector3(0, -4.25f, 0);
+    private Vector3 _initialCardsPosition = new Vector3(-10, 0, 0);
 
     #region Unity Events
     private void Start()
@@ -27,11 +29,11 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         for (int i = 0; i < _cardsNumbers / 2; i++)
         {
             CardHolder cardA = Instantiate(_cardPrefab, _initialCardsPosition, Quaternion.identity);
-            cardA.InitializeData(i);
+            cardA.InitializeData(i, _cardSprites.cardsSprites[i]);
             _cardsToSpawn.Add(cardA);
 
             CardHolder cardB = Instantiate(_cardPrefab, _initialCardsPosition, Quaternion.identity);
-            cardB.InitializeData(i);
+            cardB.InitializeData(i, _cardSprites.cardsSprites[i]);
             _cardsToSpawn.Add(cardB);
         }
 
@@ -49,13 +51,31 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
 
         CardUtils.Shuffle(targetPositions);
 
-        for (int i = 0; i < cards.Count; i++)
+        DOVirtual.DelayedCall(1f, () =>
         {
-            cards[i].transform.DOMove(targetPositions[i], 0.6f)
-                .SetEase(Ease.OutBack)
-                .SetDelay(i * 0.5f); 
+            for (int i = 0; i < cards.Count; i++)
+            {
+                var tween = cards[i].transform.DOMove(targetPositions[i], 0.6f)
+                    .SetEase(Ease.OutBack)
+                    .SetDelay(i * 0.5f);
+
+                if (i == cards.Count - 1)
+                {
+                    tween.OnComplete(() => StartCoroutine(HideCards()));
+                }
+            }
+        });
+    }
+
+    private IEnumerator HideCards()
+    {
+        yield return new WaitForSeconds(3f);
+        foreach (var card in _cardsToSpawn)
+        {
+            card.FlipCardWithSwap(false, () => card.SwapSprite());
         }
     }
+
 
     public void AddCardToComparison(CardHolder card)
     {
@@ -72,17 +92,18 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
     {
         if (!CardUtils.IsSameCardId(cardsToCompare[0].CardData, cardsToCompare[1].CardData))
         {
+            yield return new WaitForSeconds(1f);
+
             foreach (var cardHolder in cardsToCompare)
             {
                 cardHolder.FlipCardWithSwap(false, () => cardHolder.SwapSprite());
             }
         }
 
-        yield return new WaitForSeconds(2f);
-
+        yield return new WaitForSeconds(0.5f);
         foreach (var cardHolder in cardsToCompare)
         {
-            cardHolder.ToggleCardAnimation();
+            cardHolder.ToggleCardAnimation(false);
         }
 
     }

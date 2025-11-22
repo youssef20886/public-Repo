@@ -5,7 +5,7 @@ using UnityEngine;
 public class CardHolder : MonoBehaviour
 {
     #region Variables Decleration
-    public Sprite cardImage;
+    private Sprite _cardImage;
     private bool _isFaceUp;
     private float _flipSpeed = 0.3f;
     private Sequence _flipSequence;
@@ -36,10 +36,11 @@ public class CardHolder : MonoBehaviour
         _cardBackground = _spriteRenderer.sprite;
         _originalScale = transform.localScale;
     }
-    public void InitializeData(int id)
+    public void InitializeData(int id, Sprite image)
     {
         _cardData = new CardData(id);
-        Debug.Log($"card id = {_cardData.Id}");
+        _cardImage = image;
+        FlipCardWithSwap(true, () => SwapSprite());
     }
     #endregion
 
@@ -55,14 +56,14 @@ public class CardHolder : MonoBehaviour
     {
         if (_isFaceUp) return;
 
-        ToggleCardAnimation();
+        ToggleCardAnimation(true);
     }
 
     private void OnMouseExit()
     {
         if (_isFaceUp) return;
 
-        ToggleCardAnimation();
+        ToggleCardAnimation(false);
     }
     #endregion
 
@@ -84,13 +85,13 @@ public class CardHolder : MonoBehaviour
 
     public void SwapSprite()
     {
-        _spriteRenderer.sprite = _isFaceUp ? cardImage : _cardBackground;
+        _spriteRenderer.sprite = _isFaceUp ? _cardImage : _cardBackground;
     }
 
-    public void ToggleCardAnimation()
+    public void ToggleCardAnimation(bool enalarge)
     {
         _currentTween?.Kill();
-        Vector3 endValue = _isEnlarged ? _originalScale : _originalScale * hoverScale;
+        Vector3 endValue = enalarge ? _originalScale * hoverScale: _originalScale;
 
         _currentTween = transform.DOScale(endValue, tweenDuration)
                                 .SetEase(Ease.OutQuad);

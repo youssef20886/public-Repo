@@ -20,6 +20,7 @@ public class CardHolder : MonoBehaviour
     public float tweenDuration = 0.15f;
     private Vector3 originalScale;
     private Tween currentTween;
+    private bool isEnlarged;
     #endregion
 
     #region Iinitialization
@@ -35,20 +36,36 @@ public class CardHolder : MonoBehaviour
     }
     #endregion
 
-    #region Main Functionality
-    private void Update()
+    #region Unity events
+    private void OnMouseEnter()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            FlipCardWithSwap(() => SwapSprite());
-        }
+        if (isFaceUp) return;
+
+        ToggleCardAnimation();
     }
-    public void FlipCardWithSwap(Action onHalfWay)
+
+    private void OnMouseExit()
+    {
+        if (isFaceUp) return;
+
+        ToggleCardAnimation();
+    }
+
+    private void OnMouseDown()
+    {
+        if (isFaceUp) return;
+
+        FlipCardWithSwap(true, () => SwapSprite());
+    }
+    #endregion
+
+    #region Main Functionality
+    public void FlipCardWithSwap(bool faceUp, Action onHalfWay = null)
     {
         if (flipSequence != null && flipSequence.IsActive() && flipSequence.IsPlaying())
             return;
 
-        float targetY = isFaceUp ? 180 : 0;
+        float targetY = faceUp ? 180 : 0;
         flipSequence = DOTween.Sequence();
 
         flipSequence.Append(transform.DORotate(new Vector3(0, 90, 0), flipSpeed / 2))
@@ -63,21 +80,21 @@ public class CardHolder : MonoBehaviour
         spriteRenderer.sprite = isFaceUp ? cardImage : cardBackground;
     }
 
-    private void OnMouseEnter()
+    private void ToggleCardAnimation()
     {
         currentTween?.Kill();
 
-        currentTween = transform.DOScale(originalScale * hoverScale, tweenDuration)
+        if (!isEnlarged)
+        {
+            currentTween = transform.DOScale(originalScale * hoverScale, tweenDuration)
                                 .SetEase(Ease.OutQuad);
-    }
-
-    private void OnMouseExit()
-    {
-        currentTween?.Kill();
-
-        currentTween = transform.DOScale(originalScale, tweenDuration)
+        }
+        else
+        {
+            currentTween = transform.DOScale(originalScale, tweenDuration)
                                 .SetEase(Ease.OutQuad);
+        }
+        isEnlarged = !isEnlarged;
     }
-
     #endregion
 }

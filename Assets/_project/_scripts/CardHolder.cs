@@ -4,5 +4,14 @@ using UnityEngine;
 
 public class CardHolder : MonoBehaviour
 {
-    public GameObject aaaaa;
+    #region Variables Decleration
+    Card card;
+    #endregion
+
+    #region Iinitialization
+    public void Initialize()
+    {
+        
+    }
+    #endregion
 }

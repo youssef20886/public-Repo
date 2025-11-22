@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -21,7 +19,13 @@ public class CardHolder : MonoBehaviour
     private Tween _currentTween;
     private bool _isEnlarged;
 
+    [Header("Card Data")]
     private CardData _cardData;
+    public CardData CardData
+    {
+        get { return _cardData; }
+        private set { _cardData = value; }
+    }
     #endregion
 
     #region Iinitialization
@@ -39,12 +43,13 @@ public class CardHolder : MonoBehaviour
     }
     #endregion
 
-    #region Unity events
+    #region Unity Events
     private void OnMouseDown()
     {
         if (_isFaceUp) return;
 
         FlipCardWithSwap(true, () => SwapSprite());
+        StartCoroutine(CardsManager.Instance.AddCardToComparison(this));
     }
     private void OnMouseEnter()
     {
@@ -77,16 +82,16 @@ public class CardHolder : MonoBehaviour
         _isFaceUp = !_isFaceUp;
     }
 
-    private void SwapSprite()
+    public void SwapSprite()
     {
         _spriteRenderer.sprite = _isFaceUp ? cardImage : _cardBackground;
     }
 
-    private void ToggleCardAnimation()
+    public void ToggleCardAnimation()
     {
         _currentTween?.Kill();
         Vector3 endValue = _isEnlarged ? _originalScale : _originalScale * hoverScale;
-        
+
         _currentTween = transform.DOScale(endValue, tweenDuration)
                                 .SetEase(Ease.OutQuad);
 

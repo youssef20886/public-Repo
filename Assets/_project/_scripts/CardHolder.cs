@@ -49,7 +49,7 @@ public class CardHolder : MonoBehaviour
         if (_isFaceUp) return;
 
         FlipCardWithSwap(true, () => SwapSprite());
-        StartCoroutine(CardsManager.Instance.AddCardToComparison(this));
+        CardsManager.Instance.AddCardToComparison(this);
     }
     private void OnMouseEnter()
     {

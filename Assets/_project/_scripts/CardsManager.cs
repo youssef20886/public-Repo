@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class CardsManager : SingletonMonobehaviour<CardsManager>
 {
-    private const int _cardsNumbers = 4;
+    private const int _cardsNumbers = 10;
 
     [SerializeField] private CardHolder _cardPrefab;
-    private List<CardHolder> cardsToCompare = new List<CardHolder>();
+    private List<CardHolder> _cardsToCompare = new List<CardHolder>();
+    private List<CardHolder> _cardsToSpawn = new List<CardHolder>();
+
+    private Vector3 _initialCardsPosition = new Vector3(0, -4.25f, 0);
 
     #region Unity Events
     private void Start()
@@ -20,44 +24,69 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
     #region Main Functionality
     private void SpawnGameCards()
     {
-        float xSpace = 2.5f;
-        for (int i = 0; i < _cardsNumbers; i++)
+        for (int i = 0; i < _cardsNumbers / 2; i++)
         {
-            Vector3 spawnPos = new Vector3(i * xSpace, 0, 0);
-            CardHolder newCard = Instantiate(_cardPrefab, spawnPos, Quaternion.identity);
-            newCard.InitializeData(i);
+            CardHolder cardA = Instantiate(_cardPrefab, _initialCardsPosition, Quaternion.identity);
+            cardA.InitializeData(i);
+            _cardsToSpawn.Add(cardA);
+
+            CardHolder cardB = Instantiate(_cardPrefab, _initialCardsPosition, Quaternion.identity);
+            cardB.InitializeData(i);
+            _cardsToSpawn.Add(cardB);
+        }
+
+        CardUtils.Shuffle(_cardsToSpawn);
+        PositionCards(_cardsToSpawn);
+    }
+
+    private void PositionCards(List<CardHolder> cards)
+    {
+        int count = cards.Count;
+        int cols = Mathf.CeilToInt(Mathf.Sqrt(count));
+        int rows = Mathf.CeilToInt((float)count / cols);
+
+        List<Vector3> targetPositions = CardUtils.GenerateGridPositions(cards.Count, 2.5f, 3.5f);
+
+        CardUtils.Shuffle(targetPositions);
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            cards[i].transform.DOMove(targetPositions[i], 0.6f)
+                .SetEase(Ease.OutBack)
+                .SetDelay(i * 0.5f); 
         }
     }
 
-    public IEnumerator AddCardToComparison(CardHolder card)
+    public void AddCardToComparison(CardHolder card)
     {
-        cardsToCompare.Add(card);
+        _cardsToCompare.Add(card);
 
-        if (cardsToCompare.Count != 2) yield break;
+        if (_cardsToCompare.Count < 2) return;
 
-        if (!IsSameCardId(cardsToCompare[0].CardData, cardsToCompare[1].CardData))
+        var firstTwo = _cardsToCompare.GetRange(0, 2);
+        StartCoroutine(CompareCards(firstTwo));
+        _cardsToCompare.Clear();
+    }
+
+    private IEnumerator CompareCards(List<CardHolder> cardsToCompare)
+    {
+        if (!CardUtils.IsSameCardId(cardsToCompare[0].CardData, cardsToCompare[1].CardData))
         {
-            yield return new WaitForSeconds(2f);
-
             foreach (var cardHolder in cardsToCompare)
             {
                 cardHolder.FlipCardWithSwap(false, () => cardHolder.SwapSprite());
             }
         }
 
+        yield return new WaitForSeconds(2f);
+
         foreach (var cardHolder in cardsToCompare)
         {
             cardHolder.ToggleCardAnimation();
         }
 
-        cardsToCompare.Clear();
     }
     #endregion
 
-    #region Helper Functions
-    private bool IsSameCardId(CardData card1, CardData card2)
-    {
-        return card1.Id == card2.Id;
-    }
-    #endregion
+
 }

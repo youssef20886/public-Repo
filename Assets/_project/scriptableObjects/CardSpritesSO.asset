@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8381996283469894da935f61c2faa1f9, type: 3}
+  m_Name: CardSpritesSO
+  m_EditorClassIdentifier: 
+  cardsSprites:
+  - {fileID: 21300000, guid: f9276aad8580cfc4c841f7e522a5dcd7, type: 3}
+  - {fileID: 21300000, guid: 84eeabbdcefc5934f84fe22e47e1a1d4, type: 3}
+  - {fileID: 21300000, guid: 03f2b1a32035c8046836058a85bee209, type: 3}
+  - {fileID: 21300000, guid: 60d12c3cccf62844fa415186f7bc994f, type: 3}
+  - {fileID: 21300000, guid: c98c77b8086201f4b9d231aa0f26f1d0, type: 3}
+  - {fileID: 21300000, guid: 62dd78113b62cae48a53859152c8ee5b, type: 3}

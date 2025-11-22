@@ -8,93 +8,89 @@ public class CardHolder : MonoBehaviour
 {
     #region Variables Decleration
     public Sprite cardImage;
-
-    private bool isFaceUp;
-    private float flipSpeed = 0.3f;
-    private Sequence flipSequence;
-    private Sprite cardBackground;
-    private SpriteRenderer spriteRenderer;
+    private bool _isFaceUp;
+    private float _flipSpeed = 0.3f;
+    private Sequence _flipSequence;
+    private Sprite _cardBackground;
+    private SpriteRenderer _spriteRenderer;
 
     [Header("Hover Settings")]
     public float hoverScale = 1.2f;
     public float tweenDuration = 0.15f;
-    private Vector3 originalScale;
-    private Tween currentTween;
-    private bool isEnlarged;
+    private Vector3 _originalScale;
+    private Tween _currentTween;
+    private bool _isEnlarged;
+
+    private CardData _cardData;
     #endregion
 
     #region Iinitialization
     private void Awake()
     {
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
-        cardBackground = spriteRenderer.sprite;
-        originalScale = transform.localScale;
+        _cardBackground = _spriteRenderer.sprite;
+        _originalScale = transform.localScale;
     }
-    public void Initialize()
+    public void InitializeData(int id)
     {
+        _cardData = new CardData(id);
+        Debug.Log($"card id = {_cardData.Id}");
     }
     #endregion
 
     #region Unity events
+    private void OnMouseDown()
+    {
+        if (_isFaceUp) return;
+
+        FlipCardWithSwap(true, () => SwapSprite());
+    }
     private void OnMouseEnter()
     {
-        if (isFaceUp) return;
+        if (_isFaceUp) return;
 
         ToggleCardAnimation();
     }
 
     private void OnMouseExit()
     {
-        if (isFaceUp) return;
+        if (_isFaceUp) return;
 
         ToggleCardAnimation();
-    }
-
-    private void OnMouseDown()
-    {
-        if (isFaceUp) return;
-
-        FlipCardWithSwap(true, () => SwapSprite());
     }
     #endregion
 
     #region Main Functionality
     public void FlipCardWithSwap(bool faceUp, Action onHalfWay = null)
     {
-        if (flipSequence != null && flipSequence.IsActive() && flipSequence.IsPlaying())
+        if (_flipSequence != null && _flipSequence.IsActive() && _flipSequence.IsPlaying())
             return;
 
         float targetY = faceUp ? 180 : 0;
-        flipSequence = DOTween.Sequence();
+        _flipSequence = DOTween.Sequence();
 
-        flipSequence.Append(transform.DORotate(new Vector3(0, 90, 0), flipSpeed / 2))
+        _flipSequence.Append(transform.DORotate(new Vector3(0, 90, 0), _flipSpeed / 2))
            .AppendCallback(() => onHalfWay?.Invoke())
-           .Append(transform.DORotate(new Vector3(0, targetY, 0), flipSpeed / 2));
+           .Append(transform.DORotate(new Vector3(0, targetY, 0), _flipSpeed / 2));
 
-        isFaceUp = !isFaceUp;
+        _isFaceUp = !_isFaceUp;
     }
 
     private void SwapSprite()
     {
-        spriteRenderer.sprite = isFaceUp ? cardImage : cardBackground;
+        _spriteRenderer.sprite = _isFaceUp ? cardImage : _cardBackground;
     }
 
     private void ToggleCardAnimation()
     {
-        currentTween?.Kill();
+        _currentTween?.Kill();
+        Vector3 endValue = _isEnlarged ? _originalScale : _originalScale * hoverScale;
+        
+        _currentTween = transform.DOScale(endValue, tweenDuration)
+                                .SetEase(Ease.OutQuad);
 
-        if (!isEnlarged)
-        {
-            currentTween = transform.DOScale(originalScale * hoverScale, tweenDuration)
-                                .SetEase(Ease.OutQuad);
-        }
-        else
-        {
-            currentTween = transform.DOScale(originalScale, tweenDuration)
-                                .SetEase(Ease.OutQuad);
-        }
-        isEnlarged = !isEnlarged;
+        _isEnlarged = !_isEnlarged;
     }
     #endregion
 }

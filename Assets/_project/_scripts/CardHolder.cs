@@ -11,6 +11,7 @@ public class CardHolder : MonoBehaviour
     private Sequence _flipSequence;
     private Sprite _cardBackground;
     private SpriteRenderer _spriteRenderer;
+    private BoxCollider2D _boxCollider;
 
     [Header("Hover Settings")]
     public float hoverScale = 1.2f;
@@ -29,18 +30,30 @@ public class CardHolder : MonoBehaviour
     #endregion
 
     #region Iinitialization
-    private void Awake()
-    {
-        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
-        _cardBackground = _spriteRenderer.sprite;
-        _originalScale = transform.localScale;
-    }
     public void InitializeData(int id, Sprite image)
     {
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        _boxCollider = GetComponent<BoxCollider2D>();
+        _cardBackground = _spriteRenderer.sprite;
+
         _cardData = new CardData(id);
         _cardImage = image;
     }
+
+    public void SetOriginalScale()
+    {
+        _originalScale = transform.localScale;
+
+        Vector2 spriteSize = _spriteRenderer.sprite.bounds.size;
+
+        Vector3 childScale = _spriteRenderer.transform.localScale;
+
+        _boxCollider.size = new Vector2(
+            spriteSize.x * childScale.x,
+            spriteSize.y * childScale.y
+        );
+    }
+
     #endregion
 
     #region Unity Events
@@ -90,7 +103,7 @@ public class CardHolder : MonoBehaviour
     public void ToggleCardAnimation(bool enalarge)
     {
         _currentTween?.Kill();
-        Vector3 endValue = enalarge ? _originalScale * hoverScale: _originalScale;
+        Vector3 endValue = enalarge ? _originalScale * hoverScale : _originalScale;
 
         _currentTween = transform.DOScale(endValue, tweenDuration)
                                 .SetEase(Ease.OutQuad);

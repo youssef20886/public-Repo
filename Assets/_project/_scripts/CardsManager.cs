@@ -44,47 +44,58 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
     private void PositionCards(List<CardHolder> cards)
     {
         int count = cards.Count;
-        int cols = Mathf.CeilToInt(Mathf.Sqrt(count));
-        int rows = Mathf.CeilToInt((float)count / cols);
 
-        List<Vector3> targetPositions = CardUtils.GenerateGridPositions(cards.Count, 2.5f, 3.5f);
+        var bounds = cards[0].GetComponentInChildren<SpriteRenderer>().bounds;
+        float baseW = bounds.size.x;
+        float baseH = bounds.size.y;
 
-        CardUtils.Shuffle(targetPositions);
+        float scale = CardUtils.ComputeCardScale(baseW * 2, baseH * 3, count);
 
-        DOVirtual.DelayedCall(1f, () =>
+        // Apply scale to all cards
+        foreach (var card in cards)
+            card.transform.localScale = new Vector3(scale * 2f, scale * 3f, 1f);
+
+        // Generate grid positions with the new scale
+        var positions = CardUtils.GenerateGridPositions(count, (baseW * 2) * scale, (baseH * 3) * scale);
+
+        Vector3 verticalOffset = new Vector3(0f, -0.3f, 0f);
+        for (int i = 0; i < positions.Count; i++)
         {
-            for (int i = 0; i < cards.Count; i++)
+            positions[i] += verticalOffset;
+        }
+
+        // Animate
+        for (int i = 0; i < cards.Count; i++)
+        {
+            int index = i;
+            var seq = DOTween.Sequence();
+
+            seq.AppendCallback(() =>
             {
-                int index = i;
+                cards[index].FlipCardWithSwap(true, () => cards[index].SwapSprite());
+            });
 
-                DG.Tweening.Sequence seq = DOTween.Sequence();
+            seq.Append(
+                cards[index].transform.DOMove(positions[index], 0.6f)
+                    .SetEase(Ease.OutBack)
+            );
 
-                seq.AppendCallback(() =>
-                {
-                    cards[index].FlipCardWithSwap(true, () => cards[index].SwapSprite());
-                });
+            seq.SetDelay(index * 0.5f);
 
-                seq.Append(
-                    cards[index].transform.DOMove(targetPositions[index], 0.6f)
-                        .SetEase(Ease.OutBack)
-                );
-
-                seq.SetDelay(index * 0.5f);
-
-                if (index == cards.Count - 1)
-                {
-                    seq.OnComplete(() => StartCoroutine(HideCards()));
-                }
+            if (index == cards.Count - 1)
+            {
+                seq.OnComplete(() => StartCoroutine(HideCards()));
             }
-
-        });
+        }
     }
+
 
     private IEnumerator HideCards()
     {
         yield return new WaitForSeconds(3f);
         foreach (var card in _cardsToSpawn)
         {
+            card.SetOriginalScale();
             card.FlipCardWithSwap(false, () => card.SwapSprite());
         }
     }

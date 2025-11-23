@@ -59,6 +59,7 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         // Generate grid positions with the new scale
         var positions = CardUtils.GenerateGridPositions(count, (baseW * 2) * scale, (baseH * 3) * scale);
 
+        //small offset
         Vector3 verticalOffset = new Vector3(0f, -0.3f, 0f);
         for (int i = 0; i < positions.Count; i++)
         {
@@ -66,28 +67,33 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         }
 
         // Animate
-        for (int i = 0; i < cards.Count; i++)
+        DOVirtual.DelayedCall(1f, () =>
         {
-            int index = i;
-            var seq = DOTween.Sequence();
-
-            seq.AppendCallback(() =>
+            // Animate
+            for (int i = 0; i < cards.Count; i++)
             {
-                cards[index].FlipCardWithSwap(true, () => cards[index].SwapSprite());
-            });
+                int index = i;
+                var seq = DOTween.Sequence();
 
-            seq.Append(
-                cards[index].transform.DOMove(positions[index], 0.6f)
-                    .SetEase(Ease.OutBack)
-            );
+                seq.AppendCallback(() =>
+                {
+                    AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardDistribute);
+                    cards[index].FlipCardWithSwap(true, () => cards[index].SwapSprite(true));
+                });
 
-            seq.SetDelay(index * 0.5f);
+                seq.Append(
+                    cards[index].transform.DOMove(positions[index], 0.6f)
+                        .SetEase(Ease.OutBack)
+                );
 
-            if (index == cards.Count - 1)
-            {
-                seq.OnComplete(() => StartCoroutine(HideCards()));
+                seq.SetDelay(index * 0.5f);
+
+                if (index == cards.Count - 1)
+                {
+                    seq.OnComplete(() => StartCoroutine(HideCards()));
+                }
             }
-        }
+        });
     }
 
 
@@ -119,10 +125,16 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         {
             yield return new WaitForSeconds(1f);
 
+            AudioManager.Instance.ResetComboAudio();
+            AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonFail);
             foreach (var cardHolder in cardsToCompare)
             {
                 cardHolder.FlipCardWithSwap(false, () => cardHolder.SwapSprite());
             }
+        }
+        else
+        {
+            AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonSuccess);
         }
 
         yield return new WaitForSeconds(0.5f);

@@ -62,6 +62,7 @@ public class CardHolder : MonoBehaviour
         if (_isFaceUp) return;
 
         FlipCardWithSwap(true, () => SwapSprite());
+
         CardsManager.Instance.AddCardToComparison(this);
     }
     private void OnMouseEnter()
@@ -95,8 +96,11 @@ public class CardHolder : MonoBehaviour
         _isFaceUp = !_isFaceUp;
     }
 
-    public void SwapSprite()
+    public void SwapSprite(bool skipAudio = false)
     {
+        if (!skipAudio)
+            AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardClick);
+
         _spriteRenderer.sprite = _isFaceUp ? _cardImage : _cardBackground;
     }
 

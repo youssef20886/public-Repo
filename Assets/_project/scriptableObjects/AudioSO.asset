@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonClicks: []
   cardClicks:
-  - {fileID: 8300000, guid: 284ec99a3137e804492fa0b23b579332, type: 3}
-  - {fileID: 8300000, guid: 285eccc594b8a9f49900dd8434bac97e, type: 3}
-  - {fileID: 8300000, guid: 0f300975572bc8b4a81e1695ac0137f9, type: 3}
-  - {fileID: 8300000, guid: d832492861dee8048abf5306214b8553, type: 3}
-  - {fileID: 8300000, guid: 38487f1afe085924daff76b22b4b20c3, type: 3}
-  cardDistributeClips:
-  - {fileID: 8300000, guid: 6330ed67330d9934a9a6a9e70e9a86fa, type: 3}
-  - {fileID: 8300000, guid: 290bc8c0162bc9e4a8319a933cabc45d, type: 3}
-  - {fileID: 8300000, guid: 920df72d8157c35488d039e558a9acb2, type: 3}
   - {fileID: 8300000, guid: 5e19225383eb36e49a6148defb12a315, type: 3}
-  cardComparisonSuccess: []
-  cardComparisonFail: []
+  cardDistributeClips:
+  - {fileID: 8300000, guid: 5e19225383eb36e49a6148defb12a315, type: 3}
+  cardComparisonSuccess:
+  - {fileID: 8300000, guid: d521797153ca99d4a9a66876dfab7fb9, type: 3}
+  - {fileID: 8300000, guid: 2d875ef1187178541abd911652ea9699, type: 3}
+  - {fileID: 8300000, guid: 59ff96946491ce44ea1a0f362a82ff9b, type: 3}
+  - {fileID: 8300000, guid: 76ff9c74b3f5fd848b1b802756d714ab, type: 3}
+  - {fileID: 8300000, guid: ab68ac4435386964299acd52e9702cea, type: 3}
+  cardComparisonFail:
+  - {fileID: 8300000, guid: 2d6ad4f45db55ec4a9dbecaacef14ac6, type: 3}
+  comboClipIndex: 1

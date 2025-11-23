@@ -9,6 +9,8 @@ public class GameAudioSO : ScriptableObject
     public AudioClip[] cardComparisonSuccess;
     public AudioClip[] cardComparisonFail;
 
+    public int comboClipIndex = 0;
+
     public AudioClip GetAudio(GlobalVariables.AutioType autioType)
     {
         AudioClip clipToPlay = null;
@@ -25,13 +27,26 @@ public class GameAudioSO : ScriptableObject
                 clipToPlay = GetRandomClip(cardDistributeClips);
                 break;
             case GlobalVariables.AutioType.CardComparisonSuccess:
-                clipToPlay = GetRandomClip(cardComparisonSuccess);
+                clipToPlay = GetNextClip(cardComparisonSuccess);
                 break;
             case GlobalVariables.AutioType.CardComparisonFail:
                 clipToPlay = GetRandomClip(cardComparisonFail);
                 break;
         }
         return clipToPlay;
+    }
+
+    private AudioClip GetNextClip(AudioClip[] clips)
+    {
+        if (clips == null || clips.Length == 0)
+            return null;
+
+        AudioClip clip = clips[comboClipIndex];
+
+        if (comboClipIndex < clips.Length - 1)
+            comboClipIndex++;
+
+        return clip;
     }
 
     private AudioClip GetRandomClip(AudioClip[] clips)

@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class CardsManager : SingletonMonobehaviour<CardsManager>
 {
-    private const int _cardsNumbers = 8;
+    [Range(4, 24)]
+    [SerializeField] private int _cardsNumbers = 8;
 
     [SerializeField] private CardHolder _cardPrefab;
     [SerializeField] private CardSpritesSO _cardSprites;

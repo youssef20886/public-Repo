@@ -55,15 +55,28 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         {
             for (int i = 0; i < cards.Count; i++)
             {
-                var tween = cards[i].transform.DOMove(targetPositions[i], 0.6f)
-                    .SetEase(Ease.OutBack)
-                    .SetDelay(i * 0.5f);
+                int index = i;
 
-                if (i == cards.Count - 1)
+                DG.Tweening.Sequence seq = DOTween.Sequence();
+
+                seq.AppendCallback(() =>
                 {
-                    tween.OnComplete(() => StartCoroutine(HideCards()));
+                    cards[index].FlipCardWithSwap(true, () => cards[index].SwapSprite());
+                });
+
+                seq.Append(
+                    cards[index].transform.DOMove(targetPositions[index], 0.6f)
+                        .SetEase(Ease.OutBack)
+                );
+
+                seq.SetDelay(index * 0.5f);
+
+                if (index == cards.Count - 1)
+                {
+                    seq.OnComplete(() => StartCoroutine(HideCards()));
                 }
             }
+
         });
     }
 

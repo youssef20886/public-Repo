@@ -40,7 +40,6 @@ public class CardHolder : MonoBehaviour
     {
         _cardData = new CardData(id);
         _cardImage = image;
-        FlipCardWithSwap(true, () => SwapSprite());
     }
     #endregion
 

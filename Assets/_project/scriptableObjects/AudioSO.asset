@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1306a5099117254e8e6598f6813d244, type: 3}
+  m_Name: AudioSO
+  m_EditorClassIdentifier: 
+  buttonClicks: []
+  cardClicks:
+  - {fileID: 8300000, guid: 284ec99a3137e804492fa0b23b579332, type: 3}
+  - {fileID: 8300000, guid: 285eccc594b8a9f49900dd8434bac97e, type: 3}
+  - {fileID: 8300000, guid: 0f300975572bc8b4a81e1695ac0137f9, type: 3}
+  - {fileID: 8300000, guid: d832492861dee8048abf5306214b8553, type: 3}
+  - {fileID: 8300000, guid: 38487f1afe085924daff76b22b4b20c3, type: 3}
+  cardDistributeClips:
+  - {fileID: 8300000, guid: 6330ed67330d9934a9a6a9e70e9a86fa, type: 3}
+  - {fileID: 8300000, guid: 290bc8c0162bc9e4a8319a933cabc45d, type: 3}
+  - {fileID: 8300000, guid: 920df72d8157c35488d039e558a9acb2, type: 3}
+  - {fileID: 8300000, guid: 5e19225383eb36e49a6148defb12a315, type: 3}
+  cardComparisonSuccess: []
+  cardComparisonFail: []

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GameAudioSO", menuName = "ScriptableObjects", order = 1)]
+[CreateAssetMenu(fileName = "GameAudioSO", menuName = "ScriptableObjects/GameAudioSO", order = 1)]
 public class GameAudioSO : ScriptableObject
 {
     public AudioClip[] buttonClicks;

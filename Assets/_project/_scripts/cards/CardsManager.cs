@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class CardsManager : SingletonMonobehaviour<CardsManager>
 {
-    [Range(4, 24)]
-    [SerializeField] private int _cardsNumbers = 8;
+    private int _cardsNumbers = 8;
 
     [SerializeField] private CardHolder _cardPrefab;
     [SerializeField] private CardSpritesSO _cardSprites;
@@ -16,16 +15,10 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
     private List<CardHolder> _cardsToSpawn = new List<CardHolder>();
 
     private Vector3 _initialCardsPosition = new Vector3(-10, 0, 0);
-
-    #region Unity Events
-    private void Start()
-    {
-        SpawnGameCards();
-    }
-    #endregion
+    private int _successAmount;
 
     #region Main Functionality
-    private void SpawnGameCards()
+    public void SpawnGameCards()
     {
         for (int i = 0; i < _cardsNumbers / 2; i++)
         {
@@ -107,6 +100,11 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         }
     }
 
+    public void SetCardsNumbers(int amount)
+    {
+        _cardsNumbers = amount;
+    }
+
 
     public void AddCardToComparison(CardHolder card)
     {
@@ -125,7 +123,7 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         {
             ScoreManager.Instance.UpdateScore(false);
             AudioManager.Instance.ResetComboAudio();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
             AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonFail);
 
             yield return new WaitForSeconds(0.5f);
@@ -137,8 +135,13 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         else
         {
             ScoreManager.Instance.UpdateScore(true);
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
             AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonSuccess);
+            _successAmount += 2;
+            if (_successAmount == _cardsNumbers)
+            {
+                ScoreManager.Instance.GameOver();
+            }
         }
 
         yield return new WaitForSeconds(0.5f);
@@ -146,7 +149,6 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         {
             cardHolder.ToggleCardAnimation(false);
         }
-
     }
     #endregion
 

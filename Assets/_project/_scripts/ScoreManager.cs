@@ -1,11 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ScoreManager : SingletonMonobehaviour<ScoreManager>
 {
     public Action<int> onScoreUpdate;
+    public event Action onGameover;
+
     private int _currentScore;
     private int _comboMultiplyer = 0;
 
@@ -23,6 +23,16 @@ public class ScoreManager : SingletonMonobehaviour<ScoreManager>
             // reset combo and return
             _comboMultiplyer = 0;
             return;
+        }
+    }
+
+    public void GameOver()
+    {
+        onGameover?.Invoke();
+
+        if (PlayerPrefs.GetInt(GlobalVariables.MAX_SCORE) < _currentScore)
+        {
+            PlayerPrefs.SetInt(GlobalVariables.MAX_SCORE, _currentScore);
         }
     }
 }

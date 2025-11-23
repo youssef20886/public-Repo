@@ -123,10 +123,11 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
     {
         if (!CardUtils.IsSameCardId(cardsToCompare[0].CardData, cardsToCompare[1].CardData))
         {
-            yield return new WaitForSeconds(1f);
-
             AudioManager.Instance.ResetComboAudio();
+            yield return new WaitForSeconds(0.5f);
             AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonFail);
+
+            yield return new WaitForSeconds(0.5f);
             foreach (var cardHolder in cardsToCompare)
             {
                 cardHolder.FlipCardWithSwap(false, () => cardHolder.SwapSprite());
@@ -134,6 +135,7 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         }
         else
         {
+            yield return new WaitForSeconds(0.5f);
             AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonSuccess);
         }
 

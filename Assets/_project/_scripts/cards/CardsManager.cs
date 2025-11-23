@@ -123,6 +123,7 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
     {
         if (!CardUtils.IsSameCardId(cardsToCompare[0].CardData, cardsToCompare[1].CardData))
         {
+            ScoreManager.Instance.UpdateScore(false);
             AudioManager.Instance.ResetComboAudio();
             yield return new WaitForSeconds(0.5f);
             AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonFail);
@@ -135,6 +136,7 @@ public class CardsManager : SingletonMonobehaviour<CardsManager>
         }
         else
         {
+            ScoreManager.Instance.UpdateScore(true);
             yield return new WaitForSeconds(0.5f);
             AudioManager.Instance.PlayAudio(GlobalVariables.AutioType.CardComparisonSuccess);
         }
